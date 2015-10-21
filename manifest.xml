@@ -1,0 +1,11 @@
+<package>
+  <description brief="Mix the data from kvh and another gyro x source">
+  This component mix the data from kvh and a gyro x data from another imu to the problem with the broken one on the 1750 
+  </description>
+  <author>Geovane Mimoso/</author>
+  <license></license>
+  <url>http://</url>
+  <logo>http://</logo>
+  <depend package="base/cmake" />
+  <depend package="drivers/orogen/imu_kvh_1750" />
+</package>

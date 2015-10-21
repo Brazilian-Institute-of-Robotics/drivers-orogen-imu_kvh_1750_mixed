@@ -1,0 +1,11 @@
+name "imu_kvh_1750_mixed"
+
+using_task_library "imu_kvh_1750"
+import_types_from "imu_kvh_1750_mixedTypes.hpp"
+
+task_context "Task" do
+    subclasses "imu_kvh_1750::Task"
+    
+    property("aux_imu_device", "string" ,"/dev/ttyUSB0")
+    periodic 0.1
+end
