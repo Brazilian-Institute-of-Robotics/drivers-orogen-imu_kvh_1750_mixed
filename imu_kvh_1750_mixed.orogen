@@ -1,11 +1,24 @@
 name "imu_kvh_1750_mixed"
 
+using_library 'iodrivers_base'
 using_task_library "imu_kvh_1750"
 import_types_from "imu_kvh_1750_mixedTypes.hpp"
+import_types_from "base"
 
 task_context "Task" do
-    subclasses "imu_kvh_1750::Task"
-    
-    property("aux_imu_device", "string" ,"/dev/ttyUSB0")
-    periodic 0.1
+
+    needs_configuration
+    property("device", "string" ,"serial:///dev/ttyUSB0:9600")
+
+    property('timeout', 'double', 2.0)
+
+    input_port("kvh_samples","/base/samples/IMUSensors").
+    needs_reliable_connection.
+    doc 'Data from the kvh_1750_IMU'
+
+    output_port('mix_samples', '/base/samples/IMUSensors').
+    doc 'Mixed data with the giro x form the aux IMU.'
+
+    port_driven
+    #periodic 0.1
 end
