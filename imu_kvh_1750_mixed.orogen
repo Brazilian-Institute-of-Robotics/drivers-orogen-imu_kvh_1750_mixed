@@ -20,5 +20,4 @@ task_context "Task" do
     doc 'Mixed data with the giro x form the aux IMU.'
 
     port_driven
-    #periodic 0.1
 end

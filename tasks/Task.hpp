@@ -14,8 +14,10 @@ namespace imu_kvh_1750_mixed {
 	class AuxImuDriver: public iodrivers_base::Driver
 	{
 	public:
+		static const int MAX_BUFFER_SIZE = 64;
 		float gyro_x = 0.0;
-		AuxImuDriver() : iodrivers_base::Driver(8196) {}
+
+		AuxImuDriver() : iodrivers_base::Driver(MAX_BUFFER_SIZE) {}
 		virtual ~AuxImuDriver() {}
 
 		int extractPacket(uint8_t const *buffer, size_t buffer_size) const;

@@ -23,9 +23,7 @@ int AuxImuDriver::extractPacket(uint8_t const *buffer, size_t buffer_size) const
 }
 
 void AuxImuDriver::parseMessage(uint8_t const* buffer, size_t size) {
-	char str[32] = "";
-	strncpy(str, (const char*)buffer, size);
-	sscanf(str, "<%f>", &gyro_x);
+	sscanf((const char*)buffer, "<%f>", &gyro_x);
 }
 
 Task::Task(std::string const& name)
@@ -47,7 +45,6 @@ bool Task::configureHook()
     if (! TaskBase::configureHook())
         return false;
 
-    std::cout << _device.value() << std::endl;
 	aux_imu_driver.reset(new AuxImuDriver());
 	aux_imu_driver->setReadTimeout(base::Time::fromSeconds(_timeout.value()));
 	aux_imu_driver->openURI(_device.value());
@@ -66,24 +63,18 @@ void Task::updateHook()
 {
     TaskBase::updateHook();
 
-    //Get data from the Gy-80 imu.
-	try {
-		std::vector<uint8_t> buffer;
-		buffer.resize(16);
-		aux_imu_driver->readPacket(&buffer[0], buffer.size());
-		aux_imu_driver->parseMessage(&buffer[0],buffer.size());
+    /* Get data from the Gy-80 imu. */
+	std::vector<uint8_t> buffer;
+	buffer.resize(AuxImuDriver::MAX_BUFFER_SIZE);
 
-		_kvh_samples.read(imu_mix);
+	size_t size = aux_imu_driver->readPacket(&buffer[0], buffer.size());
+	aux_imu_driver->parseMessage(&buffer[0], size);
+	_kvh_samples.read(imu_mix);
 
-		imu_mix.gyro[0] = -(aux_imu_driver->gyro_x * DPS2RAD);
+	imu_mix.gyro[0] = -(aux_imu_driver->gyro_x * DPS2RAD);
 
-		/** Output **/
-	    _mix_samples.write(imu_mix);
-
-
-	} catch (iodrivers_base::TimeoutError ex){
-		std::cout << ex.what() << std::endl;
-	}
+	/** Output **/
+	_mix_samples.write(imu_mix);
 }
 
 void Task::errorHook()
