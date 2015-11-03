@@ -6,47 +6,26 @@ using namespace imu_kvh_1750_mixed;
 
 int AuxImuDriver::extractPacket(uint8_t const *buffer, size_t buffer_size) const {
 
-	static bool found_start = false;
+    if (buffer[0] != '<') {
+        return -1;
+    }
 
-	char str[32] = "";
-	strncpy(str, (const char*)buffer, buffer_size);
+    int offset = 1;
 
-	if (!found_start){
-		char *pch = strchr(str,'<');
+    while (offset < buffer_size) {
+        if (buffer[offset++] == '>') {
+            return offset;
+        }
+    }
 
-		if (pch) {
-			int len = (pch - str);
-			found_start = true;
-			return -len;
-		}
-	}
-
-	if (found_start) {
-
-		char *pch = strchr((char*)str,'>');
-		if (pch){
-			int len = (pch - (char*)str) + 1;
-			found_start = false;
-			return len;
-		}
-
-		return 0;
-	}
-
-	found_start = false;
-	return -buffer_size;
+	return 0;
 
 }
 
 void AuxImuDriver::parseMessage(uint8_t const* buffer, size_t size) {
-
 	char str[32] = "";
-
 	strncpy(str, (const char*)buffer, size);
-	//printf("%s\n", str);
 	sscanf(str, "<%f>", &gyro_x);
-	//printf("%f\n", gyro_x);
-
 }
 
 Task::Task(std::string const& name)

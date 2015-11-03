@@ -15,7 +15,7 @@ namespace imu_kvh_1750_mixed {
 	{
 	public:
 		float gyro_x = 0.0;
-		AuxImuDriver() : iodrivers_base::Driver(16) {}
+		AuxImuDriver() : iodrivers_base::Driver(8196) {}
 		virtual ~AuxImuDriver() {}
 
 		int extractPacket(uint8_t const *buffer, size_t buffer_size) const;
